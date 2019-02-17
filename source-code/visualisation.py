@@ -1,6 +1,7 @@
 # MS - INIT file; importing CSV data and printing it 
 # MS - Accessed matrix column of "married" 
 # MS - Seperated out two arrays one containing individual marital statuses and the other with counts for each status
+# MS - Set properties of pie chart plot; imported and used mpld3 to render it as HTML and open it in browser
 
 import numpy as np
 import csv
@@ -11,6 +12,9 @@ import matplotlib.pyplot as plt
 
 # Import panda
 import pandas as pd
+
+# Import mpld3 to produce visualisation output as HTML
+import mpld3
 
 # Convert the CSV data into a matrix
 df = pd.read_csv("resources/PSID.csv")
@@ -49,13 +53,41 @@ print(statuses)
 print("Printing counts: ")
 print(counts)
 
-# Print the labels 
-labels = statuses
-
 # Specify the colours 
 colours = ['yellowgreen', 'gold', 'lightskyblue', 'red', 'green', 'purple', 'orange']
 
 # Produce the plot
-fig, ax = plt.subplots(figsize=(5, 5))
-ax.pie(counts, colors=colours, labels=labels, shadow=True, 
-       explode=(0, 0.1, 0, 0, 0, 0, 0), startangle=90, autopct="%1.1f")
+fig, ax = plt.subplots(figsize=(7, 7))
+wedges, texts, autotexts = ax.pie(
+	counts, 
+	# labels=statuses, 
+	# labeldistance=1.1, 
+	shadow=True, 
+	startangle=90, 
+	autopct="%1.1f"
+	)
+
+# Set the legend
+ax.legend(
+	wedges, 
+	statuses,
+	title="Marital Statuses",
+	loc="center right",
+	bbox_to_anchor=(0.7, 0., 0.55, 1)
+	)
+
+# Set properties of of text that displays wedge values
+plt.setp(autotexts, size=12, weight="bold", color="white")
+
+# Set properties of title
+titlefont = {'fontname':'Helvetica'}
+
+ax.set_title(
+	"Distribution of marital status in the sample", 
+	{'fontsize': 10, 'fontweight': 5}, 
+	loc="center", 
+	**titlefont
+	)
+
+# Render the plot as HTML
+mpld3.show(fig)
